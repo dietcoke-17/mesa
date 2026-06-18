@@ -80,6 +80,7 @@ examples = [
 docs = [
   "mesa[rec]",
   "sphinx",
+  "nest_asyncio",
   "ipython",
   "pydata_sphinx_theme",
   "seaborn",
