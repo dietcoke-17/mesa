@@ -205,9 +205,9 @@ class Agent[M: Model]:
 
         return AgentSet(agents, random=model.random)
 
-    def __str__(self) -> str:
-        """Return a human-readable string representation of the agent."""
-        return f"{self.__class__.__name__}, agent_id = {self.unique_id}"
+    def __repr__(self) -> str:
+        """Return an unambiguous string representation of the agent."""
+        return f"{self.__class__.__name__}(unique_id={self.unique_id})"
 
     @property
     def random(self) -> Random:
