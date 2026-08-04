@@ -4,7 +4,9 @@ This guide contains breaking changes between major Mesa versions and how to reso
 Non-breaking changes aren't included, for those see our [Release history](https://github.com/mesa/mesa/releases).
 
 ## Mesa 4.0.0
-Mesa 4.0 completes the deprecation cycles announced across Mesa 3.x by removing the underlying APIs outright. None of these emit a `DeprecationWarning` on 4.0 — code still using them fails immediately with an `ImportError`, `ModuleNotFoundError`, or `TypeError`. If you're upgrading from a 3.x release, run your test suite there first with `-W error::DeprecationWarning` and resolve every warning before moving to 4.0.
+Mesa 4.0 completes the deprecation cycles announced across Mesa 3.x by removing the underlying APIs outright: [Simulator classes](#simulator-classes-removed) for the event-scheduling approach, [`seed`](#seed-parameter-removed) for `rng`, [`model.steps`](#model-steps-removed) for `model.time`, [`batch_run`](#batch-run-removed) for `Scenario`-based sweeps, [`mesa.space`](#mesa-space-removed) for `mesa.discrete_space`, and [`PropertyLayer`](#propertylayer-and-haspropertylayers-removed) for direct grid/cell exposure. None of these emit a `DeprecationWarning` on 4.0 — code still using them fails immediately with an `ImportError`, `ModuleNotFoundError`, or `TypeError`. If you're upgrading from a 3.x release, run your test suite there first with `-W error::DeprecationWarning` and resolve every warning before moving to 4.0.
+
+Install the 4.0 pre-release with `pip install -U --pre "mesa[rec]"` — plain `pip install -U "mesa[rec]"` (no `--pre`) resolves to the latest stable release instead, which is still Mesa 3.5.1 .
 
 ### Simulator classes removed
 The experimental `Simulator`, `ABMSimulator`, and `DEVSimulator` classes, and the `mesa.experimental.devs` package that contained them, have been removed outright. They were deprecated in Mesa 3.5.0 (see "Event scheduling and time advancement" under the Mesa 3.5.0 section below) in favor of scheduling methods defined directly on `Model`. The lower-level primitives they were built on — `Event`, `EventGenerator`, `EventList`, `Priority`, `Schedule` — are unaffected and still live in the stable `mesa.time` module.
@@ -89,7 +91,7 @@ config = RunConfiguration(MyModel, until=100)
 store = run_scenarios(scenarios, config)
 ```
 
-See the `mesa.experimental.scenarios` API docs before porting a large sweep — `Store` supports distributed execution and partial-failure handling that `batch_run` didn't have.
+See the [`mesa.experimental.scenarios`](apis/experimental) API docs before porting a large sweep — `Store` supports distributed execution and partial-failure handling that `batch_run` didn't have.
 
 - Ref: [PR #3325](https://github.com/mesa/mesa/pull/3325), background in [Issue #3134](https://github.com/mesa/mesa/issues/3134)
 
@@ -107,6 +109,21 @@ from mesa.discrete_space import OrthogonalMooreGrid
 
 grid = OrthogonalMooreGrid((width, height), torus=True, random=model.random)
 ```
+Networks migrate the same way — `NetworkGrid` becomes `discrete_space.Network`, and placing an agent becomes assigning its `cell` rather than calling a `place_agent` method:
+
+​```python
+# Old
+from mesa.space import NetworkGrid
+
+grid = NetworkGrid(some_networkx_graph)
+grid.place_agent(agent, node_id)
+
+# New
+from mesa.discrete_space import Network
+
+grid = Network(some_networkx_graph, random=model.random)
+agent.cell = grid[node_id]
+​```
 
 - Ref: [PR #3337](https://github.com/mesa/mesa/pull/3337)
 
@@ -129,6 +146,8 @@ grid.sugar[x, y] = 10  # equivalently: grid.property_layers["sugar"][x, y] = 10
 Reassigning `grid.sugar = new_array` instead of mutating it in place (`grid.sugar[:] = ...`) detaches it from `property_layers` and breaks cell-level access — mutate, don't reassign.
 
 - Ref: [PR #3340](https://github.com/mesa/mesa/pull/3340), [PR #3432](https://github.com/mesa/mesa/pull/3432)
+
+Install with `pip install -U "mesa[rec]"` — this resolves to the latest stable Mesa 3.x release (3.5.0 and its patch releases), not the 4.0 pre-release described in the preceding section.
 
 ## Mesa 3.5.0
 ### Event scheduling and time advancement
