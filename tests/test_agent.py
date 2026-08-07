@@ -19,6 +19,21 @@ class AgentTest(Agent):
         return self.unique_id
 
 
+class _LongAction(Action):
+    """A non-instantaneous Action, shared by the action-management tests below (start_action/remove/cancel_action)."""
+
+    def __init__(self, agent, duration=10.0):
+        super().__init__(agent, duration=duration)
+        self.interrupted_progress = []
+        self.completed = False
+
+    def on_complete(self):
+        self.completed = True
+
+    def on_interrupt(self, progress):
+        self.interrupted_progress.append(progress)
+
+
 def test_agent_removal():
     """Test agent removal."""
     model = Model()
@@ -313,19 +328,6 @@ def test_agent_repr_with_various_types():
 
 def test_agent_remove_cancels_current_action_silently():
     """Test that remove() cancels an in-progress action without firing on_interrupt."""
-
-    class _LongAction(Action):
-        def __init__(self, agent, duration=10.0):
-            super().__init__(agent, duration=duration)
-            self.interrupted_progress = []
-            self.completed = False
-
-        def on_complete(self):
-            self.completed = True
-
-        def on_interrupt(self, progress):
-            self.interrupted_progress.append(progress)
-
     model = Model()
     agent = AgentTest(model)
     action = _LongAction(agent)
@@ -375,3 +377,31 @@ def test_agent_remove_cleans_up_datasets():
     agent.remove()
 
     assert registry.removed == [agent]
+
+
+def test_agent_start_action_completes_instantly_with_zero_duration():
+    """Test that a zero-duration action completes synchronously in start_action(), firing on_complete."""
+    model = Model()
+    agent = AgentTest(model)
+    action = _LongAction(agent, duration=0)
+
+    agent.start_action(action)
+
+    assert action.completed
+    assert agent.current_action is None
+    assert not agent.is_busy
+
+
+def test_agent_cancel_action_fires_on_interrupt():
+    """Test that cancel_action() cancels the current action and fires on_interrupt."""
+    model = Model()
+    agent = AgentTest(model)
+    action = _LongAction(agent)
+    agent.start_action(action)
+
+    result = agent.cancel_action()
+
+    assert result is True
+    assert agent.current_action is None
+    assert not agent.is_busy
+    assert action.interrupted_progress != []
