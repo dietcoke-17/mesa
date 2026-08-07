@@ -405,3 +405,10 @@ def test_agent_cancel_action_fires_on_interrupt():
     assert agent.current_action is None
     assert not agent.is_busy
     assert action.interrupted_progress != []
+
+
+def test_agent_advance_is_noop():
+    """Test that advance() is a no-op."""
+    model = Model()
+    agent = AgentTest(model)
+    assert agent.advance() is None
