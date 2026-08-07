@@ -7,8 +7,8 @@ import pandas as pd
 import pytest
 
 from mesa.agent import Agent
-from mesa.model import Model
 from mesa.experimental.actions import Action
+from mesa.model import Model
 
 
 class AgentTest(Agent):
@@ -364,7 +364,7 @@ def test_agent_remove_cleans_up_datasets():
     # so it has to be populated AFTER class creation, not via a class-body assignment
     # (which __init_subclass__ would overwrite).
     DatasetAgent._datasets = {"my_dataset"}
-    
+
     registry = _DatasetRegistryDouble()
     model = Model()
     model.data_registry = {"my_dataset": registry}
