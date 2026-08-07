@@ -8,6 +8,7 @@ import pytest
 
 from mesa.agent import Agent
 from mesa.model import Model
+from mesa.experimental.actions import Action
 
 
 class AgentTest(Agent):
@@ -308,3 +309,69 @@ def test_agent_repr_with_various_types():
     assert "count=42" in r
     assert "status=None" in r
     assert "items=[1, 2, 3]" in r
+
+
+def test_agent_remove_cancels_current_action_silently():
+    """Test that remove() cancels an in-progress action without firing on_interrupt."""
+
+    class _LongAction(Action):
+        def __init__(self, agent, duration=10.0):
+            super().__init__(agent, duration=duration)
+            self.interrupted_progress = []
+            self.completed = False
+
+        def on_complete(self):
+            self.completed = True
+
+        def on_interrupt(self, progress):
+            self.interrupted_progress.append(progress)
+
+    model = Model()
+    agent = AgentTest(model)
+    action = _LongAction(agent)
+    agent.start_action(action)
+    assert agent.is_busy
+    assert agent.current_action is action
+
+    agent.remove()
+
+    assert agent.current_action is None
+    assert not agent.is_busy
+    assert agent not in model.agents
+    # Silent cleanup: neither callback should have fired.
+    assert action.interrupted_progress == []
+    assert not action.completed
+
+
+def test_agent_remove_cleans_up_datasets():
+    """Test that remove() removes the agent from every dataset it belongs to."""
+
+    class _DatasetRegistryDouble:
+        def __init__(self):
+            self.added = []
+            self.removed = []
+
+        def add_agent(self, agent):
+            self.added.append(agent)
+
+        def remove_agent(self, agent):
+            self.removed.append(agent)
+
+    class DatasetAgent(AgentTest):
+        pass
+
+    # __init_subclass__ resets _datasets to a fresh empty set for every subclass,
+    # so it has to be populated AFTER class creation, not via a class-body assignment
+    # (which __init_subclass__ would overwrite).
+    DatasetAgent._datasets = {"my_dataset"}
+    
+    registry = _DatasetRegistryDouble()
+    model = Model()
+    model.data_registry = {"my_dataset": registry}
+
+    agent = DatasetAgent(model)
+    assert registry.added == [agent]
+
+    agent.remove()
+
+    assert registry.removed == [agent]
