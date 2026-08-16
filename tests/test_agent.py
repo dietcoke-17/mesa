@@ -15,7 +15,7 @@ class AgentTest(Agent):
     """Agent class for testing."""
 
     def get_unique_identifier(self):
-        """Return unique identifier for this agent."""
+        """Return unique identifier for this hello agent."""
         return self.unique_id
 
 
