@@ -317,7 +317,9 @@ def test_agent_remove_cleans_up_datasets():
         pass
 
     model = Model()
-    dataset = model.data_registry.track_agents_numpy(DatasetAgent, "my_dataset", fields="x")
+    dataset = model.data_registry.track_agents_numpy(
+        DatasetAgent, "my_dataset", fields="x"
+    )
 
     agent = DatasetAgent(model)
     assert agent in dataset.active_agents
