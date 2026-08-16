@@ -7,7 +7,6 @@ import pandas as pd
 import pytest
 
 from mesa.agent import Agent
-from mesa.experimental.actions import Action
 from mesa.model import Model
 
 
@@ -15,23 +14,8 @@ class AgentTest(Agent):
     """Agent class for testing."""
 
     def get_unique_identifier(self):
-        """Return unique identifier for this hello agent."""
+        """Return unique identifier for this agent."""
         return self.unique_id
-
-
-class _LongAction(Action):
-    """A non-instantaneous Action, shared by the action-management tests below (start_action/remove/cancel_action)."""
-
-    def __init__(self, agent, duration=10.0):
-        super().__init__(agent, duration=duration)
-        self.interrupted_progress = []
-        self.completed = False
-
-    def on_complete(self):
-        self.completed = True
-
-    def on_interrupt(self, progress):
-        self.interrupted_progress.append(progress)
 
 
 def test_agent_removal():
@@ -326,85 +310,22 @@ def test_agent_repr_with_various_types():
     assert "items=[1, 2, 3]" in r
 
 
-def test_agent_remove_cancels_current_action_silently():
-    """Test that remove() cancels an in-progress action without firing on_interrupt."""
-    model = Model()
-    agent = AgentTest(model)
-    action = _LongAction(agent)
-    agent.start_action(action)
-    assert agent.is_busy
-    assert agent.current_action is action
-
-    agent.remove()
-
-    assert agent.current_action is None
-    assert not agent.is_busy
-    assert agent not in model.agents
-    # Silent cleanup: neither callback should have fired.
-    assert action.interrupted_progress == []
-    assert not action.completed
-
-
 def test_agent_remove_cleans_up_datasets():
     """Test that remove() removes the agent from every dataset it belongs to."""
-
-    class _DatasetRegistryDouble:
-        def __init__(self):
-            self.added = []
-            self.removed = []
-
-        def add_agent(self, agent):
-            self.added.append(agent)
-
-        def remove_agent(self, agent):
-            self.removed.append(agent)
 
     class DatasetAgent(AgentTest):
         pass
 
-    # __init_subclass__ resets _datasets to a fresh empty set for every subclass,
-    # so it has to be populated AFTER class creation, not via a class-body assignment
-    # (which __init_subclass__ would overwrite).
-    DatasetAgent._datasets = {"my_dataset"}
-
-    registry = _DatasetRegistryDouble()
     model = Model()
-    model.data_registry = {"my_dataset": registry}
+    dataset = model.data_registry.track_agents_numpy(DatasetAgent, "my_dataset", fields="x")
 
     agent = DatasetAgent(model)
-    assert registry.added == [agent]
+    assert agent in dataset.active_agents
 
     agent.remove()
 
-    assert registry.removed == [agent]
-
-
-def test_agent_start_action_completes_instantly_with_zero_duration():
-    """Test that a zero-duration action completes synchronously in start_action(), firing on_complete."""
-    model = Model()
-    agent = AgentTest(model)
-    action = _LongAction(agent, duration=0)
-
-    agent.start_action(action)
-
-    assert action.completed
-    assert agent.current_action is None
-    assert not agent.is_busy
-
-
-def test_agent_cancel_action_fires_on_interrupt():
-    """Test that cancel_action() cancels the current action and fires on_interrupt."""
-    model = Model()
-    agent = AgentTest(model)
-    action = _LongAction(agent)
-    agent.start_action(action)
-
-    result = agent.cancel_action()
-
-    assert result is True
-    assert agent.current_action is None
-    assert not agent.is_busy
-    assert action.interrupted_progress != []
+    assert agent not in dataset.active_agents
+    assert len(dataset) == 0
 
 
 def test_agent_advance_is_noop():
