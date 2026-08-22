@@ -42,11 +42,16 @@ jobs:
               { label: "visualization", test: (filename) => filename.startsWith("mesa/visualization/") },
             ];
 
-            async function labelPr(prNumber) {
+            // These labels are fully managed by pathRules: they're a deterministic
+            // function of the current diff, so it's safe to both add AND remove them
+            // as the set of changed files changes across pushes to the same PR.
+            const managedLabels = pathRules.map((rule) => rule.label);
+
+            async function labelPr(pr) {
               const files = await github.paginate(github.rest.pulls.listFiles, {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: prNumber,
+                pull_number: pr.number,
                 per_page: 100,
               });
               const paths = files.map((file) => file.filename);
@@ -55,13 +60,32 @@ jobs:
                 .filter((rule) => paths.some((filename) => rule.test(filename)))
                 .map((rule) => rule.label);
 
+              const currentLabels = (pr.labels || []).map((l) => l.name);
+              const toRemove = managedLabels.filter(
+                (label) => currentLabels.includes(label) && !toAdd.includes(label)
+              );
+
               if (toAdd.length) {
                 await github.rest.issues.addLabels({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
-                  issue_number: prNumber,
+                  issue_number: pr.number,
                   labels: toAdd,
                 });
+              }
+
+              for (const label of toRemove) {
+                try {
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr.number,
+                    name: label,
+                  });
+                } catch (err) {
+                  // Already removed (e.g. by a maintainer) between our read and this call.
+                  if (err.status !== 404) throw err;
+                }
               }
             }
 
@@ -75,10 +99,10 @@ jobs:
                 per_page: 100,
               });
               for (const pr of prs) {
-                await labelPr(pr.number);
+                await labelPr(pr);
               }
             } else {
-              await labelPr(context.payload.pull_request.number);
+              await labelPr(context.payload.pull_request);
             }
 
   label-issue:
@@ -90,6 +114,14 @@ jobs:
         with:
           script: |
             // label regex: edit & add rules
+            //
+            // Intentionally add-only (unlike the PR path-rule job): these are
+            // keyword heuristics over free-text title/body, and maintainers
+            // routinely add/remove these same labels by hand after triage
+            // (e.g. tagging "good first issue" without the phrase appearing in
+            // the body). Auto-removing on a later "edited" event would fight
+            // that manual triage instead of just filling in what the heuristic
+            // missed.
             const issueRules = [
               { label: "docs", pattern: /\bdocs\b|documentation|readme|docstring|tutorial/i },
               { label: "bug", pattern: /\berror\b|\bbug\b|\bfix\b|\bexception\b|traceback|crash|not working/i },
