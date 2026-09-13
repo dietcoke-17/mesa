@@ -205,8 +205,7 @@ def collect_agent_data(
         arguments["linewidths"].append(aps.linewidths)
 
     return {
-        key: _to_numpy_argument_array(key, value)
-        for key, value in arguments.items()
+        key: _to_numpy_argument_array(key, value) for key, value in arguments.items()
     }
 
 
