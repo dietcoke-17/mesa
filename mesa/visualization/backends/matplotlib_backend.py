@@ -169,7 +169,6 @@ class MatplotlibBackend(AbstractRenderer):
             arguments["marker"].append(aps.marker)
             arguments["zorder"].append(aps.zorder)
             arguments["alpha"].append(aps.alpha)
-                        arguments["alpha"].append(aps.alpha)
             arguments["edgecolors"].append(aps.edgecolors)
             arguments["linewidths"].append(aps.linewidths)
 
