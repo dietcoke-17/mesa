@@ -94,6 +94,7 @@ def test_matplotlib_backend_collects_agent_data():
 
     assert "loc" in data and data["loc"].shape[0] == 1
 
+
 @pytest.mark.parametrize("edgecolor", ["black", (1.0, 0.0, 0.0, 1.0)])
 def test_matplotlib_backend_collects_partial_edgecolors(edgecolor):
     """Collecting agent data preserves edgecolor alignment across agents."""
@@ -146,6 +147,7 @@ def test_matplotlib_backend_collects_tuple_markers_without_flattening():
 
     assert data["marker"].shape == (2,)
     assert list(data["marker"]) == [(3, 0, 0), (3, 0, 0)]
+
 
 def test_matplotlib_backend_draw_agents():
     """Test drawing agents."""

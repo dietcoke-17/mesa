@@ -42,6 +42,7 @@ OrthogonalGrid = OrthogonalMooreGrid | OrthogonalVonNeumannGrid
 HexGrid = mesa.discrete_space.HexGrid
 Network = mesa.discrete_space.Network
 
+
 def _to_numpy_argument_array(key: str, value: list) -> np.ndarray:
     """Convert a per-agent argument list into a NumPy array for Matplotlib.
 
@@ -77,6 +78,7 @@ def _to_numpy_argument_array(key: str, value: list) -> np.ndarray:
             return arr
 
     return np.asarray(value)
+
 
 def collect_agent_data(
     space: OrthogonalGrid | HexGrid | Network | ContinuousSpace | VoronoiGrid,

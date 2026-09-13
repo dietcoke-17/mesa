@@ -97,6 +97,7 @@ def test_collect_agent_data_warns_once_for_dict_portrayal():
 
     assert len([w for w in record if issubclass(w.category, FutureWarning)]) == 1
 
+
 @pytest.mark.parametrize(
     ("edgecolors", "expected"),
     [
@@ -116,6 +117,7 @@ def test_to_numpy_argument_array_preserves_tuple_markers():
     result = _to_numpy_argument_array("marker", [(3, 0, 0), (3, 0, 0)])
     assert result.shape == (2,)
     assert list(result) == [(3, 0, 0), (3, 0, 0)]
+
 
 def test_draw_hex_grid():
     """Test drawing hexgrids."""
@@ -176,6 +178,7 @@ def test_draw_network():
     ax = fig.add_subplot()
     draw_network(grid, agent_portrayal, ax)
 
+
 @pytest.mark.parametrize("edgecolor", ["black", (1.0, 0.0, 0.0, 1.0)])
 def test_draw_network_with_partial_edgecolors(edgecolor):
     """Network drawing handles edgecolors provided for only some agents.
@@ -204,6 +207,7 @@ def test_draw_network_with_partial_edgecolors(edgecolor):
     ax = fig.add_subplot()
     with pytest.warns(FutureWarning):
         draw_network(grid, partial_edgecolor_portrayal, ax)
+
 
 def test_draw_property_layers():
     """Test drawing property layers."""
