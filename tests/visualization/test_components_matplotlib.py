@@ -128,7 +128,7 @@ def test_to_numpy_argument_array_mixed_face_colors():
 
     uniform = [(1.0, 0.0, 0.0, 1.0), (1.0, 0.0, 0.0, 1.0)]
     result = _to_numpy_argument_array("c", uniform)
-    assert list(result) == (2, 4)
+    assert result.shape == (2, 4)
 
 
 def test_draw_hex_grid():
