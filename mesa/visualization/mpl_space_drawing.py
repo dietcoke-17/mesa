@@ -76,6 +76,7 @@ def _to_numpy_argument_array(key: str, value: list) -> np.ndarray:
         return _coerce_color_array(value)
     return np.asarray(value)
 
+
 def _coerce_color_array(value: list) -> np.ndarray:
     """Try a normal array first; fall back to a manual 1D object array.
 
@@ -90,6 +91,7 @@ def _coerce_color_array(value: list) -> np.ndarray:
         arr = np.empty(len(value), dtype=object)
         arr[:] = value
         return arr
+
 
 def collect_agent_data(
     space: OrthogonalGrid | HexGrid | Network | ContinuousSpace | VoronoiGrid,

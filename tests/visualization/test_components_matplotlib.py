@@ -119,6 +119,7 @@ def test_to_numpy_argument_array_preserves_tuple_markers():
     assert result.shape == (2,)
     assert list(result) == [(3, 0, 0), (3, 0, 0)]
 
+
 def test_to_numpy_argument_array_mixed_face_colors():
     """Face colors can be a mix of named and RGBA colors."""
     mixed = ["blue", (1.0, 0.0, 0.0, 1.0)]
@@ -127,7 +128,8 @@ def test_to_numpy_argument_array_mixed_face_colors():
 
     uniform = [(1.0, 0.0, 0.0, 1.0), (1.0, 0.0, 0.0, 1.0)]
     result = _to_numpy_argument_array("c", uniform)
-    assert list(result) == (2,4)
+    assert list(result) == (2, 4)
+
 
 def test_draw_hex_grid():
     """Test drawing hexgrids."""
@@ -218,6 +220,7 @@ def test_draw_network_with_partial_edgecolors(edgecolor):
     with pytest.warns(FutureWarning):
         draw_network(grid, partial_edgecolor_portrayal, ax)
 
+
 def test_draw_network_with_mixed_face_colors():
     """Network drawing handles face colors provided as a mix of named and RGBA."""
     graph = nx.path_graph(2)
@@ -236,6 +239,7 @@ def test_draw_network_with_mixed_face_colors():
     fig = Figure()
     ax = fig.add_subplot()
     draw_network(grid, mixed_color_portrayal, ax)
+
 
 def test_draw_property_layers():
     """Test drawing property layers."""
