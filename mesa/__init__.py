@@ -4,6 +4,7 @@ Core Objects: Model, and Agent.
 """
 
 import datetime
+from typing import Any
 
 import mesa.discrete_space as discrete_space
 import mesa.experimental as experimental
@@ -28,3 +29,16 @@ __version__ = "4.0.0a0"
 __license__ = "Apache 2.0"
 _this_year = datetime.datetime.now(tz=datetime.UTC).date().year
 __copyright__ = f"Copyright {_this_year} Mesa Team"
+
+_LAZY_SUBMODULES = frozenset({"discrete_space", "experimental", "meta_agents", "time"})
+
+def __getattr__(name: str) -> Any:
+    if name in _LAZY_SUBMODULES:
+        import importlib
+        module = importlib.import_module(f"mesa.{name}")
+        globals()[name] = module
+        return module
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+def __dir__() -> list[str]:
+    return sorted(list(globals()) + _LAZY_SUBMODULES)
