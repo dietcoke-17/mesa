@@ -33,13 +33,16 @@ __copyright__ = f"Copyright {_this_year} Mesa Team"
 
 _LAZY_SUBMODULES = frozenset({"discrete_space", "experimental", "meta_agents", "time"})
 
+
 def __getattr__(name: str) -> Any:
     if name in _LAZY_SUBMODULES:
         import importlib
+
         module = importlib.import_module(f"mesa.{name}")
         globals()[name] = module
         return module
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 def __dir__() -> list[str]:
     return sorted(list(globals()) + list(_LAZY_SUBMODULES))
