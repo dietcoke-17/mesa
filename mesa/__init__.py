@@ -4,12 +4,13 @@ Core Objects: Model, and Agent.
 """
 
 import datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import mesa.discrete_space as discrete_space
-import mesa.experimental as experimental
-import mesa.meta_agents as meta_agents
-import mesa.time as time
+if TYPE_CHECKING:
+    import mesa.discrete_space as discrete_space
+    import mesa.experimental as experimental
+    import mesa.meta_agents as meta_agents
+    import mesa.time as time
 from mesa.agent import Agent
 from mesa.datacollection import DataCollector
 from mesa.model import Model
@@ -41,4 +42,4 @@ def __getattr__(name: str) -> Any:
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 def __dir__() -> list[str]:
-    return sorted(list(globals()) + _LAZY_SUBMODULES)
+    return sorted(list(globals()) + list(_LAZY_SUBMODULES))

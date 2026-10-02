@@ -13,6 +13,8 @@ Notes:
     - Features graduate from experimental status once their APIs are stabilized
 """
 
+from typing import Any
+
 from mesa.experimental import actions, continuous_space, mesa_signals
 
 __all__ = ["actions", "continuous_space", "mesa_signals"]
@@ -28,4 +30,4 @@ def __getattr__(name: str) -> Any:
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 def __dir__() -> list[str]:
-    return sorted(list(globals()) + _LAZY_SUBMODULES)
+    return sorted(list(globals()) +list(_LAZY_SUBMODULES))
