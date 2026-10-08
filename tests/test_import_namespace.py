@@ -75,6 +75,7 @@ def test_meta_agents():
 
     assert MetaAgents is mesa.meta_agents.MetaAgents
 
+
 def test_lazy_submodule_getattr_and_dir():
     """Excercise the lazy __getattr__/__dir__ added for #2343.
     mesa/__init__.py and mesa/experimental/__init__.py lazy-load their
@@ -91,7 +92,7 @@ def test_lazy_submodule_getattr_and_dir():
     import mesa.meta_agents
     import mesa.time
 
-    for name, expected in(
+    for name, expected in (
         ("discrete_space", mesa.discrete_space),
         ("experimental", mesa.experimental),
         ("meta_agents", mesa.meta_agents),
@@ -100,7 +101,7 @@ def test_lazy_submodule_getattr_and_dir():
         assert name in dir(mesa)
         assert mesa.__getattr__(name) is expected
 
-    for name, expected in(
+    for name, expected in (
         ("actions", mesa.experimental.actions),
         ("continuous_space", mesa.experimental.continuous_space),
     ):

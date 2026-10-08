@@ -37,4 +37,4 @@ def __getattr__(name: str) -> Any:
 
 
 def __dir__() -> list[str]:
-        return sorted(set(globals()) | _LAZY_SUBMODULES)
+    return sorted(set(globals()) | _LAZY_SUBMODULES)
