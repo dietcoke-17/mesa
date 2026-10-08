@@ -15,7 +15,7 @@ import code
 import io
 import sys
 from collections.abc import Callable
-from dataclasses import dataclass, replace  # type: ignore
+from dataclasses import dataclass, replace
 
 import solara
 from solara.components.input import use_change
@@ -243,7 +243,7 @@ class ConsoleManager:
 
                 # Completing a multi-line block
                 if self.history:
-                    self._replace_last(  # type: ignore
+                    self._replace_last(
                         command=full_code,
                         output=error if error else output,
                         is_error=bool(error),
