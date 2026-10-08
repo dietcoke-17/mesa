@@ -2,8 +2,6 @@
 
 import pytest
 
-from mesa import meta_agents
-
 
 def test_import():
     """This tests the new, simpler Mesa namespace.
@@ -90,7 +88,7 @@ def test_lazy_submodule_getattr_and_dir():
     import mesa.experimental
     import mesa.experimental.actions
     import mesa.experimental.continuous_space
-    import mesa meta_agents
+    import mesa.meta_agents
     import mesa.time
 
     for name, expected in(
@@ -99,7 +97,7 @@ def test_lazy_submodule_getattr_and_dir():
         ("meta_agents", mesa.meta_agents),
         ("time", mesa.time),
     ):
-        assert name in mesa.__dir__()
+        assert name in dir(mesa)
         assert mesa.__getattr__(name) is expected
 
     for name, expected in(

@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     import mesa.experimental as experimental
     import mesa.meta_agents as meta_agents
     import mesa.time as time
+
 from mesa.agent import Agent
 from mesa.datacollection import DataCollector
 from mesa.model import Model
@@ -45,4 +46,4 @@ def __getattr__(name: str) -> Any:
 
 
 def __dir__() -> list[str]:
-    return sorted(list(globals()) + list(_LAZY_SUBMODULES))
+    return sorted(set(globals()) | _LAZY_SUBMODULES)
