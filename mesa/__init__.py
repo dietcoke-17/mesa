@@ -37,7 +37,7 @@ _LAZY_SUBMODULES = frozenset({"discrete_space", "experimental", "meta_agents", "
 
 def __getattr__(name: str) -> Any:
     if name in _LAZY_SUBMODULES:
-        import importlib
+        import importlib  # noqa: PLC0415
 
         module = importlib.import_module(f"mesa.{name}")
         globals()[name] = module

@@ -77,20 +77,21 @@ def test_meta_agents():
 
 
 def test_lazy_submodule_getattr_and_dir():
-    """Excercise the lazy __getattr__/__dir__ added for #2343.
+    """Exercise the lazy __getattr__/__dir__ added for #2343.
+
     mesa/__init__.py and mesa/experimental/__init__.py lazy-load their
     optional-dependency submodules via a module-level __getattr__ (PEP 562)
-    instead of importing them eagerly. This excercises that __getattr__/__dir__
+    instead of importing them eagerly. This exercises that __getattr__/__dir__
     directly, independent of whichever other test happensto import a given
     submodule a different way first.
     """
-    import mesa
-    import mesa.discrete_space
-    import mesa.experimental
-    import mesa.experimental.actions
-    import mesa.experimental.continuous_space
-    import mesa.meta_agents
-    import mesa.time
+    import mesa  # noqa: PLC0415
+    import mesa.discrete_space  # noqa: PLC0415
+    import mesa.experimental  # noqa: PLC0415
+    import mesa.experimental.actions  # noqa: PLC0415
+    import mesa.experimental.continuous_space  # noqa: PLC0415
+    import mesa.meta_agents  # noqa: PLC0415
+    import mesa.time  # noqa: PLC0415
 
     for name, expected in (
         ("discrete_space", mesa.discrete_space),
