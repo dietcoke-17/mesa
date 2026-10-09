@@ -230,7 +230,7 @@ def SolaraViz(
     # If a CommandConsole entry is present (bare, or paged as
     # (CommandConsole, page)), wire console_kwargs's additional_imports
     # through and let it render in the main grid like any other
-    # componenet -- a real, resizable/draggable cell, rather than being
+    # component -- a real, resizable/draggable cell, rather than being
     # squeezed into a fixed-height sidebar card. Give its own tab by
     # passing (CommandConsole, page) instead of the bare reference.
 
