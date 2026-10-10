@@ -9,6 +9,14 @@ import solara
 from mesa.visualization.solara_viz import register_param_extractor
 from mesa.visualization.user_param import Slider
 
+# ipyvuetify renamed these components between Vuetify 2 and Vuetify 3.
+_expansion_header = (
+    getattr(solara.v, "ExpansionPanelHeader", None) or solara.v.ExpansionPanelTitle
+)
+_expansion_content = (
+    getattr(solara.v, "ExpansionPanelContent", None) or solara.v.ExpansionPanelText
+)
+
 
 def extract_dict_param(spec):
     """Extract default values from a nested dictionary parameter specification.
@@ -81,9 +89,9 @@ def DictInput(name, options, on_change):
         solara.v.ExpansionPanels(v_model=[0], multiple=True),
         solara.v.ExpansionPanel(),
     ):
-        with solara.v.ExpansionPanelHeader():
+        with _expansion_header():
             solara.Text(f"{label}")
-        with solara.v.ExpansionPanelContent():
+        with _expansion_content():
             entries = options.get("entries", {})
             for key, value_spec in entries.items():
                 if isinstance(value_spec, dict) and "value" in value_spec:

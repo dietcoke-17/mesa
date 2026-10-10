@@ -1,7 +1,12 @@
 import altair as alt
 
 # Import custom parameter support
-from custom_params import CustomUserInputs
+from mesa.examples.basic.boltzmann_wealth_model.custom_params import CustomUserInputs
+
+import importlib
+import sys
+
+import altair as alt
 
 import mesa.visualization.solara_viz as solara_viz
 from mesa.examples.basic.boltzmann_wealth_model.model import BoltzmannWealth
@@ -114,3 +119,31 @@ page = SolaraViz(
 )
 
 page  # noqa
+
+APP = "mesa.examples.basic.boltzmann_wealth_model.app_with_dict_params"
+
+
+def test_app_with_dict_params(monkeypatch):
+    # The app overrides solara_viz.UserInputs at import time. Registering the
+    # current value with monkeypatch means it is restored after this test.
+    monkeypatch.setattr(solara_viz, "UserInputs", solara_viz.UserInputs)
+    sys.modules.pop(APP, None)
+    app = importlib.import_module(APP)
+
+    assert app.page is not None
+    assert solara_viz.UserInputs is custom_params.CustomUserInputs
+
+    # Default grid_dimensions branch
+    default_model = app.BoltzmannWealthWithDictParams()
+    assert len(default_model.agents) == 100
+
+    # Explicit grid_dimensions branch
+    model = app.BoltzmannWealthWithDictParams(
+        n=5, grid_dimensions={"width": 6, "height": 7}, rng=1
+    )
+    assert len(model.agents) == 5
+
+    # agent_portrayal and post_process
+    agent = next(iter(model.agents))
+    assert app.agent_portrayal(agent) is not None
+    assert app.post_process(alt.Chart().mark_point()) is not None
