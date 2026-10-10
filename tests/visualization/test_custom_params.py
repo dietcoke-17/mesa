@@ -21,10 +21,22 @@ DICT_PARAM = {
     "type": "Dict",
     "label": "Grid",
     "entries": {
-        "width": {"value": 10, "label": "Width", "type": "SliderInt",
-                  "min": 5, "max": 50, "step": 1},
-        "ratio": {"value": 0.5, "label": "Ratio", "type": "SliderFloat",
-                  "min": 0.0, "max": 1.0, "step": 0.1},
+        "width": {
+            "value": 10,
+            "label": "Width",
+            "type": "SliderInt",
+            "min": 5,
+            "max": 50,
+            "step": 1,
+        },
+        "ratio": {
+            "value": 0.5,
+            "label": "Ratio",
+            "type": "SliderFloat",
+            "min": 0.0,
+            "max": 1.0,
+            "step": 0.1,
+        },
         "name": {"value": "abc", "label": "Name"},  # defaults to text input
         "count": {"value": 3, "label": "Count"},  # text input, numeric
     },
@@ -54,12 +66,28 @@ def test_extract_dict_param_empty():
 def test_renders_all_supported_types():
     rc = render(
         {
-            "int": {"type": "SliderInt", "value": 5, "label": "Int",
-                    "min": 0, "max": 10, "step": 1},
-            "float": {"type": "SliderFloat", "value": 0.5, "label": "Float",
-                      "min": 0.0, "max": 1.0, "step": 0.1},
-            "select": {"type": "Select", "value": "a", "label": "Select",
-                       "values": ["a", "b"]},
+            "int": {
+                "type": "SliderInt",
+                "value": 5,
+                "label": "Int",
+                "min": 0,
+                "max": 10,
+                "step": 1,
+            },
+            "float": {
+                "type": "SliderFloat",
+                "value": 0.5,
+                "label": "Float",
+                "min": 0.0,
+                "max": 1.0,
+                "step": 0.1,
+            },
+            "select": {
+                "type": "Select",
+                "value": "a",
+                "label": "Select",
+                "values": ["a", "b"],
+            },
             "check": {"type": "Checkbox", "value": True, "label": "Check"},
             "text": {"type": "InputText", "value": "hi", "label": "Text"},
             "slider_obj": Slider(label="Obj", value=5, min=1, max=10, step=1),

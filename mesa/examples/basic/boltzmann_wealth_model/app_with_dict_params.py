@@ -1,14 +1,12 @@
-import altair as alt
-
-# Import custom parameter support
-from mesa.examples.basic.boltzmann_wealth_model.custom_params import CustomUserInputs
-
 import importlib
 import sys
 
 import altair as alt
 
 import mesa.visualization.solara_viz as solara_viz
+
+# Import custom parameter support
+from mesa.examples.basic.boltzmann_wealth_model.custom_params import CustomUserInputs
 from mesa.examples.basic.boltzmann_wealth_model.model import BoltzmannWealth
 from mesa.mesa_logging import INFO, log_to_stderr
 from mesa.visualization import (
