@@ -94,7 +94,7 @@ def extract_dict_param(spec):
     result = {}
     for key, value in entries.items():
         if isinstance(value, dict) and "value" in value:
-            result[key] = value["value"]
+            extract_dict_param({"entries": value})
         elif isinstance(value, dict):
             result[key] = extract_dict_param({"entries": value})
         else:

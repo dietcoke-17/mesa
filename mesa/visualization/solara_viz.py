@@ -99,6 +99,9 @@ def extract_default_value(param_spec: Any) -> Any:
     Returns:
         The extracted default value
     """
+    if isinstance(param_spec, UserParam):
+        # Slider and other UserParam objects expose their default via .get()
+        return param_spec.get("value")
     if not isinstance(param_spec, dict):
         return param_spec
 

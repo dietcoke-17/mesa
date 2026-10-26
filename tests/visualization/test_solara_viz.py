@@ -318,6 +318,28 @@ def test_model_creator():  # noqa: D103
         )
 
 
+def test_model_creator_stores_slider_value():
+    """Test that ModelCreator stores a Slider's value as the default parameter."""
+
+    class SimpleModel:
+        def __init__(self, param1=1, param2=1):
+            pass
+
+    model_parameters = solara.reactive({})
+    solara.render(
+        ModelCreator(
+            solara.reactive(SimpleModel()),
+            user_params={
+                "param1": Slider("Param1", 10, 10, 100, 1),
+                "param2": {"type": "SliderInt", "value": 5, "min": 1, "max": 9},
+            },
+            model_parameters=model_parameters,
+        ),
+        handle_error=False,
+    )
+    assert model_parameters.value == {"param1": 10, "param2": 5}
+
+
 # test that _check_model_params raises ValueError when *args are present
 def test_check_model_params_with_args_only():
     """Test that _check_model_params raises ValueError when *args are present."""
@@ -746,6 +768,10 @@ class TestBackwardCompatibility:
         assert extract_default_value(100) == 100
         assert extract_default_value("fixed_string") == "fixed_string"
         assert extract_default_value({"key": "value"}) is None  # No "value" key
+
+    def test_slider_object(self):
+        """Test that a Slider gives its value, not the Slider object itself."""
+        assert extract_default_value(Slider("Param", 10, 1, 20, 1)) == 10
 
 
 class TestEdgeCases:
