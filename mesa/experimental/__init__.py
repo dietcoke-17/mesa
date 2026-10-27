@@ -16,3 +16,22 @@ Notes:
 from mesa.experimental import actions, continuous_space, mesa_signals, meta_agents
 
 __all__ = ["actions", "continuous_space", "mesa_signals", "meta_agents"]
+<<<<<<< HEAD
+=======
+
+_LAZY_SUBMODULES = frozenset({"actions", "continuous_space", "meta_agents"})
+
+
+def __getattr__(name: str) -> Any:
+    if name in _LAZY_SUBMODULES:
+        import importlib  # noqa: PLC0415
+
+        module = importlib.import_module(f"mesa.experimental.{name}")
+        globals()[name] = module
+        return module
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | _LAZY_SUBMODULES)
+>>>>>>> cd022ad0 (final changes)
