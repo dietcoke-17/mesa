@@ -18,12 +18,13 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     import mesa.experimental.actions as actions
     import mesa.experimental.continuous_space as continuous_space
+    import mesa.experimental.meta_agents as meta_agents
 
 from mesa.experimental import mesa_signals
 
-__all__ = ["actions", "continuous_space", "mesa_signals"]
+__all__ = ["actions", "continuous_space", "mesa_signals", "meta_agents"]
 
-_LAZY_SUBMODULES = frozenset({"actions", "continuous_space"})
+_LAZY_SUBMODULES = frozenset({"actions", "continuous_space", "meta_agents"})
 
 
 def __getattr__(name: str) -> Any:
