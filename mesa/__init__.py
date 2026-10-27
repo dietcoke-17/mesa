@@ -11,6 +11,9 @@ if TYPE_CHECKING:
     import mesa.experimental as experimental
     import mesa.time as time
 
+import mesa.discrete_space as discrete_space
+import mesa.experimental as experimental
+import mesa.time as time
 from mesa.agent import Agent
 from mesa.datacollection import DataCollector
 from mesa.model import Model

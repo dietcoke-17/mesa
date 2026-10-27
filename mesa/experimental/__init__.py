@@ -13,29 +13,6 @@ Notes:
     - Features graduate from experimental status once their APIs are stabilized
 """
 
-from typing import TYPE_CHECKING, Any
-
-if TYPE_CHECKING:
-    import mesa.experimental.actions as actions
-    import mesa.experimental.continuous_space as continuous_space
-    import mesa.experimental.meta_agents as meta_agents
-
-from mesa.experimental import mesa_signals
+from mesa.experimental import actions, continuous_space, mesa_signals, meta_agents
 
 __all__ = ["actions", "continuous_space", "mesa_signals", "meta_agents"]
-
-_LAZY_SUBMODULES = frozenset({"actions", "continuous_space", "meta_agents"})
-
-
-def __getattr__(name: str) -> Any:
-    if name in _LAZY_SUBMODULES:
-        import importlib  # noqa: PLC0415
-
-        module = importlib.import_module(f"mesa.experimental.{name}")
-        globals()[name] = module
-        return module
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-
-def __dir__() -> list[str]:
-    return sorted(set(globals()) | _LAZY_SUBMODULES)
