@@ -81,7 +81,7 @@ class Grid(DiscreteSpace[T]):
         """Convenience access to the height of the grid."""
         return self.dimensions[1]
 
-    # Number of random cells tried before select_random_empty_cell and 
+    # Number of random cells tried before select_random_empty_cell and
     # select_random_cell_with_capacity fall back to an O(n) scan.
     _MAX_RANDOM_PROBES: int = 50
 
